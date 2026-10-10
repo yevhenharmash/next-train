@@ -1,6 +1,6 @@
 # next-train
 
-Web app: next trains from Watford Junction to London Euston, sorted by **arrival** time, with "leave by" times based on your walk. Plan, API notes and open questions: [PLAN.md](PLAN.md).
+Web app: next trains from Watford Junction to London Euston, sorted by **arrival** time, with "leave by" times based on your walk. Plan, API notes and open questions: [PLAN.md](PLAN.md). Similar apps and how we differ: [COMPETITORS.md](COMPETITORS.md).
 
 ```sh
 pnpm install
