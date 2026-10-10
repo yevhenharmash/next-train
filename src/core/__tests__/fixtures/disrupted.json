@@ -1,0 +1,100 @@
+{
+  "generatedAt": "2026-10-09T08:10:03.1234567+01:00",
+  "locationName": "Watford Junction",
+  "crs": "WFJ",
+  "filterLocationName": "London Euston",
+  "filtercrs": "EUS",
+  "filterType": "to",
+  "nrccMessages": [
+    {
+      "Value": "<p>Disruption between Watford Junction and London Euston. More details can be found in <a href=\"https://www.nationalrail.co.uk/service-disruptions/\">Latest Travel News</a>.</p>"
+    }
+  ],
+  "platformAvailable": true,
+  "trainServices": [
+    {
+      "serviceID": "VT0814",
+      "std": "08:14",
+      "etd": "Cancelled",
+      "platform": "8",
+      "operator": "Avanti West Coast",
+      "operatorCode": "VT",
+      "isCancelled": true,
+      "cancelReason": "This train has been cancelled because of a fault on this train",
+      "delayReason": null,
+      "length": 11,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        {
+          "callingPoint": [
+            { "locationName": "London Euston", "crs": "EUS", "st": "08:30", "et": "Cancelled", "isCancelled": true }
+          ]
+        }
+      ]
+    },
+    {
+      "serviceID": "LM0819",
+      "std": "08:19",
+      "etd": "Delayed",
+      "platform": "9",
+      "operator": "London Northwestern Railway",
+      "operatorCode": "LM",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": "This train has been delayed by a signalling problem",
+      "length": 8,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "08:39", "et": "Delayed" }] }
+      ]
+    },
+    {
+      "serviceID": "LO0820",
+      "std": "08:20",
+      "etd": "On time",
+      "platform": "2",
+      "operator": "London Overground",
+      "operatorCode": "LO",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 5,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "09:11", "et": "On time" }] }
+      ]
+    },
+    {
+      "serviceID": "LM0826",
+      "std": "08:26",
+      "etd": "08:41",
+      "platform": "10",
+      "operator": "London Northwestern Railway",
+      "operatorCode": "LM",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": "This train has been delayed by a signalling problem",
+      "length": 4,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "08:46", "et": "09:01" }] }
+      ]
+    },
+    {
+      "serviceID": "VT0833",
+      "std": "08:33",
+      "etd": "On time",
+      "platform": "8",
+      "operator": "Avanti West Coast",
+      "operatorCode": "VT",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 11,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "08:49", "et": "On time" }] }
+      ]
+    }
+  ]
+}

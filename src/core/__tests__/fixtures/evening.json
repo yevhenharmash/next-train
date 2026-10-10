@@ -1,0 +1,126 @@
+{
+  "generatedAt": "2026-10-08T18:02:11.4512345+01:00",
+  "locationName": "Watford Junction",
+  "crs": "WFJ",
+  "filterLocationName": "London Euston",
+  "filtercrs": "EUS",
+  "filterType": "to",
+  "nrccMessages": null,
+  "platformAvailable": true,
+  "trainServices": [
+    {
+      "serviceID": "LO1805",
+      "std": "18:05",
+      "etd": "On time",
+      "platform": "2",
+      "operator": "London Overground",
+      "operatorCode": "LO",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 5,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        {
+          "callingPoint": [
+            { "locationName": "Watford High Street", "crs": "WFH", "st": "18:08", "et": "On time" },
+            { "locationName": "Harrow & Wealdstone", "crs": "HRW", "st": "18:21", "et": "On time" },
+            { "locationName": "Queens Park", "crs": "QPW", "st": "18:42", "et": "On time" },
+            { "locationName": "London Euston", "crs": "EUS", "st": "18:56", "et": "On time" }
+          ]
+        }
+      ]
+    },
+    {
+      "serviceID": "VT1809",
+      "std": "18:09",
+      "etd": "On time",
+      "platform": "8",
+      "operator": "Avanti West Coast",
+      "operatorCode": "VT",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 11,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "18:25", "et": "On time" }] }
+      ]
+    },
+    {
+      "serviceID": "LM1813",
+      "std": "18:13",
+      "etd": "18:17",
+      "platform": "9",
+      "operator": "London Northwestern Railway",
+      "operatorCode": "LM",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": "This train has been delayed by a late running freight train",
+      "length": 8,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        {
+          "callingPoint": [
+            { "locationName": "Harrow & Wealdstone", "crs": "HRW", "st": "18:21", "et": "18:25" },
+            { "locationName": "London Euston", "crs": "EUS", "st": "18:33", "et": "18:36" }
+          ]
+        }
+      ]
+    },
+    {
+      "serviceID": "LM1824",
+      "std": "18:24",
+      "etd": "On time",
+      "platform": null,
+      "operator": "London Northwestern Railway",
+      "operatorCode": "LM",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 12,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        {
+          "callingPoint": [
+            { "locationName": "Bushey", "crs": "BSH", "st": "18:27", "et": "On time" },
+            { "locationName": "Harrow & Wealdstone", "crs": "HRW", "st": "18:32", "et": "On time" },
+            { "locationName": "London Euston", "crs": "EUS", "st": "18:44", "et": "On time" }
+          ]
+        }
+      ]
+    },
+    {
+      "serviceID": "LO1825",
+      "std": "18:25",
+      "etd": "On time",
+      "platform": "2",
+      "operator": "London Overground",
+      "operatorCode": "LO",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 5,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "19:16", "et": "On time" }] }
+      ]
+    },
+    {
+      "serviceID": "VT1838",
+      "std": "18:38",
+      "etd": "On time",
+      "platform": "8",
+      "operator": "Avanti West Coast",
+      "operatorCode": "VT",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 9,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "18:54", "et": "On time" }] }
+      ]
+    }
+  ]
+}

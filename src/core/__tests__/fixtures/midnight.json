@@ -1,0 +1,60 @@
+{
+  "generatedAt": "2026-10-09T23:48:20.9876543+01:00",
+  "locationName": "Watford Junction",
+  "crs": "WFJ",
+  "filterLocationName": "London Euston",
+  "filtercrs": "EUS",
+  "filterType": "to",
+  "nrccMessages": null,
+  "platformAvailable": true,
+  "trainServices": [
+    {
+      "serviceID": "LM2352",
+      "std": "23:52",
+      "etd": "On time",
+      "platform": "9",
+      "operator": "London Northwestern Railway",
+      "operatorCode": "LM",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 4,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "00:13", "et": "On time" }] }
+      ]
+    },
+    {
+      "serviceID": "LO2359",
+      "std": "23:59",
+      "etd": "00:03",
+      "platform": "2",
+      "operator": "London Overground",
+      "operatorCode": "LO",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 5,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "00:50", "et": "00:54" }] }
+      ]
+    },
+    {
+      "serviceID": "VT0021",
+      "std": "00:21",
+      "etd": "On time",
+      "platform": "8",
+      "operator": "Avanti West Coast",
+      "operatorCode": "VT",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 9,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "00:38", "et": "On time" }] }
+      ]
+    }
+  ]
+}

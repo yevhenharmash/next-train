@@ -26,42 +26,49 @@ GET https://api1.raildata.org.uk/1010-live-departure-board-dep/LDBWS/api/2022012
 Header: x-apikey: <RDM consumer key>
 ```
 
-| Part | Value | Status |
-|---|---|---|
-| Base path `api1.raildata.org.uk/1010-live-departure-board-dep/LDBWS/api/20220120/` | — | ✅ found in search results |
-| Method `GetDepBoardWithDetails` (includes calling points, so arrival times at EUS come in the same call) | — | ✅ |
-| Fallback `GetDepartureBoard` (no calling points, so no arrival times) | — | ✅ |
-| `numRows` (≤150), `filterCrs`, `filterType` (`to`/`from`), `timeOffset` (−120…120), `timeWindow` (0…120) | — | ✅ |
-| Station CRS codes: `WFJ` = Watford Junction, `EUS` = London Euston | — | ✅ |
-| Auth header is `x-apikey` | — | ⚠️ unverified ("typically") |
-| CRS as a path segment (`/WFJ`) or a query param | — | ⚠️ unverified |
-| Whether the free "Live Departure Board" subscription covers **WithDetails**, or it's a separate RDM product with its own key (the `1010-…-dep` product ID in the URL suggests one subscription per product) | — | ⚠️ unverified |
-| Response field names (see below) | — | ⚠️ unverified, based on the old SOAP schema |
-| Rate limits | — | ⚠️ unknown, so poll politely (see §4) |
-| CORS | — | ⚠️ unknown, and it doesn't matter: we proxy anyway (§3) |
+| Part                                                                                                                                                                                                        | Value | Status                                                  |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ----- | ------------------------------------------------------- |
+| Base path `api1.raildata.org.uk/1010-live-departure-board-dep/LDBWS/api/20220120/`                                                                                                                          | —     | ✅ found in search results                              |
+| Method `GetDepBoardWithDetails` (includes calling points, so arrival times at EUS come in the same call)                                                                                                    | —     | ✅                                                      |
+| Fallback `GetDepartureBoard` (no calling points, so no arrival times)                                                                                                                                       | —     | ✅                                                      |
+| `numRows` (≤150), `filterCrs`, `filterType` (`to`/`from`), `timeOffset` (−120…120), `timeWindow` (0…120)                                                                                                    | —     | ✅                                                      |
+| Station CRS codes: `WFJ` = Watford Junction, `EUS` = London Euston                                                                                                                                          | —     | ✅                                                      |
+| Auth header is `x-apikey`                                                                                                                                                                                   | —     | ⚠️ unverified ("typically")                             |
+| CRS as a path segment (`/WFJ`) or a query param                                                                                                                                                             | —     | ⚠️ unverified                                           |
+| Whether the free "Live Departure Board" subscription covers **WithDetails**, or it's a separate RDM product with its own key (the `1010-…-dep` product ID in the URL suggests one subscription per product) | —     | ⚠️ unverified                                           |
+| Response field names (see below)                                                                                                                                                                            | —     | ⚠️ unverified, based on the old SOAP schema             |
+| Rate limits                                                                                                                                                                                                 | —     | ⚠️ unknown, so poll politely (see §4)                   |
+| CORS                                                                                                                                                                                                        | —     | ⚠️ unknown, and it doesn't matter: we proxy anyway (§3) |
 
 ### The response we expect (field names taken from the old LDBWS schema)
 
 ```jsonc
 {
   "generatedAt": "2026-10-10T22:41:07+01:00",
-  "locationName": "Watford Junction", "crs": "WFJ",
-  "filterLocationName": "London Euston", "filtercrs": "EUS",
-  "nrccMessages": [{ "Value": "Disruption between … " }],     // service alerts
+  "locationName": "Watford Junction",
+  "crs": "WFJ",
+  "filterLocationName": "London Euston",
+  "filtercrs": "EUS",
+  "nrccMessages": [{ "Value": "Disruption between … " }], // service alerts
   "platformAvailable": true,
-  "trainServices": [{
-    "serviceID": "…",
-    "std": "22:47",                 // scheduled departure, UK local time
-    "etd": "On time",               // "On time" | "Delayed" | "Cancelled" | "22:52"
-    "platform": "8",                // can be missing
-    "operator": "London Northwestern Railway", "operatorCode": "LM",
-    "isCancelled": false, "cancelReason": null, "delayReason": null,
-    "length": 8,
-    "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
-    "subsequentCallingPoints": [{ "callingPoint": [
-      { "locationName": "London Euston", "crs": "EUS", "st": "23:05", "et": "On time" }
-    ]}]
-  }]
+  "trainServices": [
+    {
+      "serviceID": "…",
+      "std": "22:47", // scheduled departure, UK local time
+      "etd": "On time", // "On time" | "Delayed" | "Cancelled" | "22:52"
+      "platform": "8", // can be missing
+      "operator": "London Northwestern Railway",
+      "operatorCode": "LM",
+      "isCancelled": false,
+      "cancelReason": null,
+      "delayReason": null,
+      "length": 8,
+      "destination": [{ "locationName": "London Euston", "crs": "EUS" }],
+      "subsequentCallingPoints": [
+        { "callingPoint": [{ "locationName": "London Euston", "crs": "EUS", "st": "23:05", "et": "On time" }] },
+      ],
+    },
+  ],
 }
 ```
 
@@ -96,28 +103,28 @@ The newest frontend stack across our web projects: the toolchain from **Mossling
 
 > Versions are what the repos had on **2026-10-10**. Re-check them against npm when scaffolding (`pnpm create vite`, `pnpm dlx shadcn@latest init`).
 
-| Area | Choice | Version seen | Taken from |
-|---|---|---|---|
-| Build / dev server | Vite | 8.x | Mossling, Kiroku |
-| UI | React + `@vitejs/plugin-react` | 19.3 / 6.x | Mossling (Kiroku is still on React 18) |
-| Language | TypeScript, `strict` | 7.x (⚠️ see below) | Mossling |
-| Tests | vitest, run with `TZ=UTC` | 5.x | Mossling (Kiroku uses Jest, which we're not taking) |
-| Styling | Tailwind CSS v4 via `@tailwindcss/vite` + `tw-animate-css` | 4.2 | Kiroku |
-| Components | shadcn/ui (Radix + `class-variance-authority` + `clsx` + `tailwind-merge`) | latest CLI | Kiroku (`packages/shadcn-ui`), inter-fast (RN version) |
-| Icons / toasts | `lucide-react`, `sonner` | — | Kiroku |
-| Server state | `@tanstack/react-query` + devtools | 5.x | inter-fast, Kiroku |
-| Dates | `date-fns` | 4.x | inter-fast, Kiroku |
-| Timezone | `@date-fns/tz` (`TZDate` in `Europe/London`), or plain `Intl` with no dependency | — | **new**, not used in our repos yet |
-| Lint | ESLint flat config: `@eslint/js` + `typescript-eslint` + `@eslint-react/eslint-plugin` + `eslint-config-prettier` | ESLint 10 | Kiroku `tooling/eslint-config`, **copied inline** |
-| Format | Prettier: `semi`, double quotes, `trailingComma: "es5"`, `printWidth: 120` | 3.x | Kiroku `.prettierrc` |
-| Git hooks | husky + lint-staged (prettier on staged files) | — | Kiroku |
-| Package manager | pnpm | 11.x | Kiroku |
-| Imports | `@/` → `src/` alias | — | Kiroku |
-| Hosting | Vercel (static build + one function) | — | inter-fast, TraceRep |
+| Area               | Choice                                                                                                            | Version seen      | Taken from                                             |
+| ------------------ | ----------------------------------------------------------------------------------------------------------------- | ----------------- | ------------------------------------------------------ |
+| Build / dev server | Vite                                                                                                              | 8.x               | Mossling, Kiroku                                       |
+| UI                 | React + `@vitejs/plugin-react`                                                                                    | 19.3 / 6.x        | Mossling (Kiroku is still on React 18)                 |
+| Language           | TypeScript, `strict`                                                                                              | 6.0.3 (see below) | Mossling                                               |
+| Tests              | vitest, run with `TZ=UTC`                                                                                         | 5.x               | Mossling (Kiroku uses Jest, which we're not taking)    |
+| Styling            | Tailwind CSS v4 via `@tailwindcss/vite` + `tw-animate-css`                                                        | 4.2               | Kiroku                                                 |
+| Components         | shadcn/ui (Radix + `class-variance-authority` + `clsx` + `tailwind-merge`)                                        | latest CLI        | Kiroku (`packages/shadcn-ui`), inter-fast (RN version) |
+| Icons / toasts     | `lucide-react`, `sonner`                                                                                          | —                 | Kiroku                                                 |
+| Server state       | `@tanstack/react-query` + devtools                                                                                | 5.x               | inter-fast, Kiroku                                     |
+| Dates              | `date-fns`                                                                                                        | 4.x               | inter-fast, Kiroku                                     |
+| Timezone           | `@date-fns/tz` (`TZDate` in `Europe/London`), or plain `Intl` with no dependency                                  | —                 | **new**, not used in our repos yet                     |
+| Lint               | ESLint flat config: `@eslint/js` + `typescript-eslint` + `@eslint-react/eslint-plugin` + `eslint-config-prettier` | ESLint 10         | Kiroku `tooling/eslint-config`, **copied inline**      |
+| Format             | Prettier: `semi`, double quotes, `trailingComma: "es5"`, `printWidth: 120`                                        | 3.x               | Kiroku `.prettierrc`                                   |
+| Git hooks          | husky + lint-staged (prettier on staged files)                                                                    | —                 | Kiroku                                                 |
+| Package manager    | pnpm                                                                                                              | 11.x              | Kiroku                                                 |
+| Imports            | `@/` → `src/` alias                                                                                               | —                 | Kiroku                                                 |
+| Hosting            | Vercel (static build + one function)                                                                              | —                 | inter-fast, TraceRep                                   |
 
 **Not taken from Kiroku:** Redux, styled-components, Jest, Firebase, React 18. Also not the private `@kiroku-code/*` packages (eslint-config, shadcn-ui): they're workspace/GitHub Packages only, so we copy the ESLint config and run `shadcn init` fresh.
 
-⚠️ **TS 7 + typescript-eslint is unproven here.** Mossling runs TS 7 with no ESLint, and Kiroku runs ESLint on TS 5.9. Check at scaffold time. If typescript-eslint doesn't support TS 7 yet, use the newest TS line it does support.
+✅ **TS 7 + typescript-eslint: checked 2026-10-10, not supported.** typescript-eslint 8.71 requires `typescript >=4.8.4 <6.1.0`, so we use **TS 6.0.3** (same as inter-fast). Move to TS 7 once typescript-eslint supports it.
 
 Scripts: `dev`, `build` (`tsc --noEmit && vite build`), `typecheck`, `lint` (`eslint . && prettier --check .`), `format`, `test` (`TZ=UTC vitest run`).
 
@@ -153,14 +160,14 @@ Same split as inter-fast's `fasting.ts` / `fasting-api.ts` / `fasting-hooks.ts` 
 
 ```ts
 useQuery({
-  queryKey: ['board', 'WFJ', 'EUS'],
-  queryFn: () => fetchBoard({ crs: 'WFJ', filterCrs: 'EUS' }),
-  refetchInterval: 60_000,             // 1/min is plenty; the boards update about that often
-  refetchIntervalInBackground: false,  // stop polling in hidden tabs
-  refetchOnWindowFocus: true,          // fresh data when you look at it
+  queryKey: ["board", "WFJ", "EUS"],
+  queryFn: () => fetchBoard({ crs: "WFJ", filterCrs: "EUS" }),
+  refetchInterval: 60_000, // 1/min is plenty; the boards update about that often
+  refetchIntervalInBackground: false, // stop polling in hidden tabs
+  refetchOnWindowFocus: true, // fresh data when you look at it
   staleTime: 30_000,
   retry: 2,
-})
+});
 ```
 
 - "Minutes until" re-renders from `clock.ts` every 15s **without refetching**. The time display and the polling are independent.
@@ -188,14 +195,22 @@ useQuery({
 
 ## 7. Phases
 
-| # | What | Done when |
-|---|---|---|
-| 0 | Get the key, curl, save fixtures (§2) | All ⚠️ resolved, 3 fixtures saved |
-| 1 | `src/core` + vitest | Parse, time, rank tests pass on all fixtures |
-| 2 | Scaffold the §4 stack (Vite + Tailwind + shadcn + ESLint/Prettier/husky), dev proxy, react-query UI | `pnpm dev` shows live WFJ→EUS trains; `pnpm lint`, `pnpm typecheck` and `pnpm test` are clean; key not in the bundle (`grep` the `dist/` output) |
-| 3 | `api/board.ts` Vercel function + deploy to Vercel | Works on your phone |
-| 4 | Nice-to-haves: Southern via CLJ as a second query, return trip (EUS→WFJ) after 17:00, installable PWA | — |
-| — | TRMNL: **not now**, see §9 | — |
+**Status (2026-10-10):** Phases 1 and 2 are built and checked against **synthetic** fixtures and dev demo data (`src/core/__tests__/fixtures/README.md`). Phase 0 is still open: it needs an RDM key. Then swap in real fixtures, fix any schema differences, and check `pnpm dev` against live data. Phase 3's function (`api/board.ts`) is written but not deployed.
+
+Things to check when deploying (Phase 3), none of them tested yet:
+
+- **pnpm 11 on Vercel.** `packageManager: pnpm@11.13.1` only applies if Vercel uses corepack (`ENABLE_EXPERIMENTAL_COREPACK=1`); otherwise it picks pnpm from the lockfile version. Make sure the install step uses pnpm 11.
+- **`allowImportingTsExtensions` in `tsconfig.json`** (there to silence Vite's native-config-loader warning). If Vercel's TS build of `api/board.ts` objects to it (TS5096), remove it and drop the `.ts` extensions in `vite.config.ts` and `server/demo.ts`. That only brings back a warning.
+- Set `RDM_KEY` in the Vercel project's environment variables, then check that `/api/board` returns `cache-control: s-maxage=30`.
+
+| #   | What                                                                                                  | Done when                                                                                                                                        |
+| --- | ----------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
+| 0   | Get the key, curl, save fixtures (§2)                                                                 | All ⚠️ resolved, 3 fixtures saved                                                                                                                |
+| 1   | `src/core` + vitest                                                                                   | Parse, time, rank tests pass on all fixtures                                                                                                     |
+| 2   | Scaffold the §4 stack (Vite + Tailwind + shadcn + ESLint/Prettier/husky), dev proxy, react-query UI   | `pnpm dev` shows live WFJ→EUS trains; `pnpm lint`, `pnpm typecheck` and `pnpm test` are clean; key not in the bundle (`grep` the `dist/` output) |
+| 3   | `api/board.ts` Vercel function + deploy to Vercel                                                     | Works on your phone                                                                                                                              |
+| 4   | Nice-to-haves: Southern via CLJ as a second query, return trip (EUS→WFJ) after 17:00, installable PWA | —                                                                                                                                                |
+| —   | TRMNL: **not now**, see §9                                                                            | —                                                                                                                                                |
 
 ## 8. Gotchas to put in CLAUDE.md
 
@@ -214,6 +229,7 @@ Nothing in Phases 0–4 depends on this. These are notes for when the device arr
 **Option A: use what's already on the market.** The TRMNL recipe "Live UK train departures & delays" (https://trmnl.com/recipes/466893) already uses the same RDM API. If it can show WFJ→EUS well enough, install it and stop there.
 
 **Option B: adapt our code.** Build a TRMNL private plugin whose "polling URL" is our `/api/board` proxy, with a Liquid template on TRMNL's side. Reuse `src/core` (parse, rank, arrival-at-Euston sorting) by having the proxy return already-ranked trains, which is the feature the recipe probably lacks. It would need:
+
 - an e-ink layout at exactly **800×480**: black on white, big type, no colour.
 - **absolute times** for the next 3–4 trains (e.g. "22:47 · Plat 8 · arr 23:05"), not "leave in 4 min".
 
