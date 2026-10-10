@@ -4,7 +4,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { parseBoard } from "@/core/board";
-import { rank } from "@/core/rank";
+import { delayedBeforeBest, rank } from "@/core/rank";
 import { Alerts } from "./Alerts";
 import { useNow } from "./clock";
 import { clockTime } from "./format";
@@ -12,6 +12,7 @@ import { useBoard } from "./hooks";
 import { NextTrain } from "./NextTrain";
 import { DESTINATIONS, useSettings } from "./settings";
 import { SettingsBar } from "./SettingsBar";
+import { ThemeToggle } from "./ThemeToggle";
 import { TrainRow } from "./TrainRow";
 
 const ORIGIN = "WFJ";
@@ -30,16 +31,24 @@ export function App() {
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-4 px-4 pt-[max(1rem,env(safe-area-inset-top))] pb-8">
-      <header className="flex items-baseline justify-between">
+      <header className="flex items-center justify-between gap-2">
         <h1 className="text-lg font-semibold">Watford Junction</h1>
-        {query.data?.demo && <Badge variant="secondary">Demo data</Badge>}
+        <div className="flex items-center gap-1">
+          {query.data?.demo && <Badge variant="secondary">Demo data</Badge>}
+          <ThemeToggle />
+        </div>
       </header>
 
       <SettingsBar settings={settings} onChange={setSettings} />
 
       {board ? (
         <>
-          <NextTrain train={board.trains.find((t) => t.best) ?? null} destination={destinationName} now={now} />
+          <NextTrain
+            train={board.trains.find((t) => t.best) ?? null}
+            delayed={delayedBeforeBest(board.trains)}
+            destination={destinationName}
+            now={now}
+          />
           <Alerts messages={board.alerts} />
 
           {query.isError && (

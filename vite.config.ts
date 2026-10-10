@@ -11,7 +11,7 @@ import { demoBoard } from "./server/demo.ts";
  * RDM_KEY is read here, in Node: it has no VITE_ prefix, so it's never bundled into the client.
  * Without a key it serves generated demo data instead.
  */
-function boardApi(apiKey: string | undefined): Plugin {
+function boardApi(apiKey: string | undefined, baseUrl: string | undefined): Plugin {
   return {
     name: "next-train:board-api",
     configureServer(server) {
@@ -19,7 +19,7 @@ function boardApi(apiKey: string | undefined): Plugin {
       server.middlewares.use("/api/board", (req, res) => {
         const url = new URL(req.originalUrl ?? req.url ?? "/", "http://localhost");
         const respond = async (): Promise<Response> => {
-          if (apiKey) return handleBoardRequest(url, apiKey);
+          if (apiKey) return handleBoardRequest(url, { apiKey, baseUrl });
           const query = readBoardQuery(url.searchParams);
           if (typeof query === "string") return Response.json({ error: query }, { status: 400 });
           const board = demoBoard(new Date());
@@ -52,7 +52,11 @@ export default defineConfig(({ mode }) => {
   // "" loads every variable from .env files, not just VITE_* ones. Only used here, server-side.
   const env = loadEnv(mode, import.meta.dirname, "");
   return {
-    plugins: [react(), tailwindcss(), boardApi(env.RDM_KEY || process.env.RDM_KEY)],
+    plugins: [
+      react(),
+      tailwindcss(),
+      boardApi(env.RDM_KEY || process.env.RDM_KEY, env.RDM_BASE_URL || process.env.RDM_BASE_URL),
+    ],
     resolve: {
       alias: { "@": path.resolve(import.meta.dirname, "./src") },
     },

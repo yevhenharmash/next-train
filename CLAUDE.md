@@ -28,6 +28,7 @@ Vite 8, React 19, TypeScript 6 (**not 7**: typescript-eslint doesn't support it 
   - `api.ts` → `hooks.ts` (useQuery) → components.
   - `format.ts` holds every display string.
   - `settings.ts` stores walk time and destination in localStorage.
+  - `theme.ts` + `ThemeToggle.tsx`: System / Light / Dark. It sets a `dark` class on `<html>`; an inline script in `index.html` applies the same logic before first paint. Change both together.
 - `src/components/ui/`: shadcn-generated components. Add more with `pnpm dlx shadcn@latest add <name>`, then check the import is `@/lib/utils`. Once, it was generated as `from "cn"` and installed a random npm package called `cn`.
 - `server/board.ts`: the `/api/board` proxy handler, shared by dev and prod. It allow-lists params, adds the key, and caches for 30s at the edge.
 - `server/demo.ts`: dev-only demo board.

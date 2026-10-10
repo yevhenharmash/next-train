@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { parseBoard } from "../board";
-import { rank } from "../rank";
+import { delayedBeforeBest, rank } from "../rank";
 import { fixtures, nowOf, ukClock } from "./helpers";
 
 function ranked(name: keyof typeof fixtures, walkMinutes: number) {
@@ -43,9 +43,27 @@ describe("rank", () => {
     expect(cancelled.catchable).toBe(false);
     expect(cancelled.leaveBy).toBeNull();
 
-    // "Delayed" with no estimate is judged on the timetable: leave by 08:14, still catchable.
-    expect(trains.find((t) => t.id === "LM0819")!.catchable).toBe(true);
-    expect(trains.find((t) => t.best)!.id).toBe("LM0819");
+    // "Delayed" with no estimate is placed and judged on the timetable (leave by 08:14, still
+    // catchable), but isn't best: the on-time 08:33 Avanti is. The delayed one is flagged instead.
+    const delayed = trains.find((t) => t.id === "LM0819")!;
+    expect(delayed.catchable).toBe(true);
+    expect(delayed.best).toBe(false);
+    expect(trains.find((t) => t.best)!.id).toBe("VT0833");
+    expect(delayedBeforeBest(trains)?.id).toBe("LM0819");
+  });
+
+  it("flags no delayed train when the best one arrives first", () => {
+    expect(delayedBeforeBest(ranked("evening", 10))).toBeNull();
+  });
+
+  it("still flags a delayed train when there's no best train", () => {
+    // Only the cancelled 08:14 and the delayed 08:19 left: nothing has a known time.
+    const raw = fixtures.disrupted;
+    const now = nowOf(raw);
+    const trains = parseBoard(raw, "EUS", now).trains.filter((t) => t.id === "VT0814" || t.id === "LM0819");
+    const result = rank(trains, now, 5);
+    expect(result.some((t) => t.best)).toBe(false);
+    expect(delayedBeforeBest(result)?.id).toBe("LM0819");
   });
 
   it("has no best train when nothing is catchable", () => {

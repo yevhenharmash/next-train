@@ -45,20 +45,26 @@ export function demoBoard(now: Date): RawBoard {
     .slice(0, 10);
 
   const trainServices = upcoming.map(({ pattern, std }, index): RawService => {
-    // A little disruption so every state is visible: the 2nd train is 4 late, the 5th is cancelled.
+    // A little disruption so every state is visible: the 2nd train is 4 late, the 3rd is delayed
+    // with no estimate, the 5th is cancelled.
     const late = index === 1 ? 4 : 0;
+    const noEstimate = index === 2;
     const cancelled = index === 4;
     const arrival = plus(std, pattern.journey);
     return {
       serviceID: `demo-${pattern.operatorCode}-${hhmm(std)}`,
       std: hhmm(std),
-      etd: cancelled ? "Cancelled" : late ? hhmm(plus(std, late)) : "On time",
+      etd: cancelled ? "Cancelled" : noEstimate ? "Delayed" : late ? hhmm(plus(std, late)) : "On time",
       platform: index === 3 ? null : pattern.platform,
       operator: pattern.operator,
       operatorCode: pattern.operatorCode,
       isCancelled: cancelled,
       cancelReason: cancelled ? "This train has been cancelled because of a shortage of train crew" : null,
-      delayReason: late ? "This train has been delayed by a late running train in front of this one" : null,
+      delayReason: late
+        ? "This train has been delayed by a late running train in front of this one"
+        : noEstimate
+          ? "This train has been delayed by a signalling problem"
+          : null,
       length: pattern.length,
       destination: [{ locationName: "London Euston", crs: "EUS" }],
       subsequentCallingPoints: [
@@ -68,7 +74,7 @@ export function demoBoard(now: Date): RawBoard {
               locationName: "London Euston",
               crs: "EUS",
               st: hhmm(arrival),
-              et: cancelled ? "Cancelled" : late ? hhmm(plus(arrival, late)) : "On time",
+              et: cancelled ? "Cancelled" : noEstimate ? "Delayed" : late ? hhmm(plus(arrival, late)) : "On time",
               isCancelled: cancelled,
             },
           ],

@@ -3,8 +3,9 @@
 // upstream method, with allow-listed params: it is not an open pass-through.
 // Self-contained on purpose (no runtime imports) so Vercel can bundle it without path tricks.
 
-const UPSTREAM =
-  "https://api1.raildata.org.uk/1010-live-departure-board-dep/LDBWS/api/20220120/GetDepBoardWithDetails/";
+// The product route differs between subscriptions ("-dep" on older ones, "-dep1_2" on newer ones):
+// copy the exact base URL from your subscription's API tab into RDM_BASE_URL if it isn't this one.
+export const DEFAULT_BASE_URL = "https://api1.raildata.org.uk/1010-live-departure-board-dep1_2/LDBWS/api/20220120";
 const CRS = /^[A-Z]{3}$/;
 const CACHE_SECONDS = 30;
 
@@ -28,24 +29,26 @@ export function readBoardQuery(params: URLSearchParams): BoardQuery | string {
   return { crs, filterCrs, numRows };
 }
 
-export function upstreamUrl({ crs, filterCrs, numRows }: BoardQuery): string {
+export function upstreamUrl({ crs, filterCrs, numRows }: BoardQuery, baseUrl = DEFAULT_BASE_URL): string {
   const params = new URLSearchParams({
     numRows: String(numRows),
     filterCrs,
     filterType: "to",
     timeWindow: "120",
   });
-  return `${UPSTREAM}${crs}?${params}`;
+  return `${baseUrl.replace(/\/$/, "")}/GetDepBoardWithDetails/${crs}?${params}`;
 }
 
-export async function handleBoardRequest(url: URL, apiKey: string | undefined): Promise<Response> {
+export type BoardConfig = { apiKey: string | undefined; baseUrl?: string };
+
+export async function handleBoardRequest(url: URL, { apiKey, baseUrl }: BoardConfig): Promise<Response> {
   const query = readBoardQuery(url.searchParams);
   if (typeof query === "string") return json(400, { error: query });
   if (!apiKey) return json(500, { error: "RDM_KEY is not configured on the server" });
 
   let upstream: Response;
   try {
-    upstream = await fetch(upstreamUrl(query), {
+    upstream = await fetch(upstreamUrl(query, baseUrl || DEFAULT_BASE_URL), {
       headers: { "x-apikey": apiKey, accept: "application/json" },
       signal: AbortSignal.timeout(10_000),
     });
