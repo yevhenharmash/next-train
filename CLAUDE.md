@@ -1,4 +1,6 @@
-# next-train
+# traincommute
+
+Renamed from next-train on 2026-10-13. The repo, folder and localStorage keys (`next-train:settings`, `next-train:theme`) keep the old name on purpose: changing the keys would reset everyone's saved route.
 
 Web app: next trains between any two stations (default Watford Junction → London Euston), sorted by **arrival** time, with "leave by" times based on your walk. Plan, API notes and open questions: [PLAN.md](PLAN.md). Similar apps and how we differ: [COMPETITORS.md](COMPETITORS.md).
 

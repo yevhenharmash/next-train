@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 
 export type Theme = "system" | "light" | "dark";
 
+// The app's first name. Kept so renaming it didn't reset anyone's saved settings.
 const KEY = "next-train:theme";
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 export const THEMES: Theme[] = ["system", "light", "dark"];

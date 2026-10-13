@@ -1,4 +1,4 @@
-# next-train: Plan (v0, nothing built yet)
+# traincommute (first called next-train): Plan (v0, nothing built yet)
 
 > A tiny web app that answers one question: **what's the next train from Watford Junction to London, and when do I need to leave?**
 >

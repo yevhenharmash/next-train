@@ -13,7 +13,7 @@ import { demoBoard } from "./server/demo.ts";
  */
 function boardApi(apiKey: string | undefined, baseUrl: string | undefined): Plugin {
   return {
-    name: "next-train:board-api",
+    name: "traincommute:board-api",
     configureServer(server) {
       if (!apiKey) server.config.logger.warn("RDM_KEY not set: /api/board serves demo data.");
       server.middlewares.use("/api/board", (req, res) => {

@@ -41,7 +41,7 @@ export function App() {
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-4 px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] text-[15px] leading-snug">
       <header className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 flex-col gap-0.5">
-          <h1 className="text-[21px] font-semibold tracking-[-0.015em]">Next train</h1>
+          <h1 className="text-[21px] font-semibold tracking-[-0.015em]">traincommute</h1>
           <p className="text-[13px] text-muted-foreground">Sorted by arrival time</p>
         </div>
         <div className="flex items-center gap-2">

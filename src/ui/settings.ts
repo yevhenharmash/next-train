@@ -10,6 +10,7 @@ export type Settings = {
   recent: Station[];
 };
 
+// The app's first name. Kept so renaming it didn't reset anyone's saved settings.
 const KEY = "next-train:settings";
 export const DEFAULT_WALK = 10;
 export const MAX_WALK = 120;
