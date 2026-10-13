@@ -18,8 +18,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { TrainRow } from "./TrainRow";
 import { WalkRow } from "./WalkRow";
 
-/** Public on purpose: a Ko-fi / Buy Me a Coffee / GitHub Sponsors page. No button when it isn't set. */
-const DONATE_URL: string | undefined = import.meta.env.VITE_DONATE_URL || undefined;
+const DONATE_URL = "https://buymeacoffee.com/biteme_yevhen";
 
 export function App() {
   const [settings, setSettings] = useSettings();
@@ -47,6 +46,17 @@ export function App() {
         </div>
         <div className="flex items-center gap-2">
           {query.data?.demo && <Badge variant="secondary">Demo data</Badge>}
+          {/* Same look as the theme button. */}
+          <a
+            href={DONATE_URL}
+            target="_blank"
+            rel="noreferrer"
+            aria-label="Buy me a coffee (opens in a new tab)"
+            title="Buy me a coffee"
+            className="flex size-11 shrink-0 items-center justify-center rounded-xl border bg-card text-foreground outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          >
+            <Coffee className="size-5" strokeWidth={1.8} />
+          </a>
           <ThemeToggle />
         </div>
       </header>
@@ -103,23 +113,22 @@ export function App() {
             </div>
           )}
 
-          <section aria-label={`Trains to ${to.name}, by arrival`} className="flex flex-col gap-2">
-            <div className="flex items-baseline justify-between gap-2 px-1">
-              <h2 className="text-[13px] font-semibold text-muted-foreground">By arrival at {toShort}</h2>
-              <span aria-hidden className="text-xs text-muted-foreground">
-                dep → arr
-              </span>
-            </div>
-            {board.trains.length > 0 ? (
+          {/* No trains at all: the card above already says so, an empty list would only repeat it. */}
+          {board.trains.length > 0 && (
+            <section aria-label={`Trains to ${to.name}, by arrival`} className="flex flex-col gap-2">
+              <div className="flex items-baseline justify-between gap-2 px-1">
+                <h2 className="text-[13px] font-semibold text-muted-foreground">By arrival at {toShort}</h2>
+                <span aria-hidden className="text-xs text-muted-foreground">
+                  dep → arr
+                </span>
+              </div>
               <ul className="divide-y overflow-hidden rounded-2xl border bg-card">
                 {board.trains.map((train) => (
                   <TrainRow key={train.id} train={train} />
                 ))}
               </ul>
-            ) : (
-              <p className="rounded-2xl border border-dashed px-4 py-6 text-center text-muted-foreground">{noTrains}</p>
-            )}
-          </section>
+            </section>
+          )}
         </>
       ) : query.isError ? (
         <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl border bg-card p-4">
@@ -151,30 +160,15 @@ export function App() {
             (ODbL)
           </span>
         </div>
-        <div className="flex shrink-0 items-center gap-1">
-          <button
-            type="button"
-            aria-label="Refresh"
-            disabled={query.isFetching}
-            className="flex size-11 shrink-0 items-center justify-center rounded-xl outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            onClick={() => void query.refetch()}
-          >
-            <RefreshCw className={cn("size-4.5", query.isFetching && "animate-spin")} strokeWidth={1.8} />
-          </button>
-          {DONATE_URL && (
-            // Same look as the theme button. Kept down here, away from the trains: people open this in a hurry.
-            <a
-              href={DONATE_URL}
-              target="_blank"
-              rel="noreferrer"
-              aria-label="Say thanks (opens in a new tab)"
-              title="Say thanks"
-              className="flex size-11 shrink-0 items-center justify-center rounded-xl border bg-card text-foreground outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
-            >
-              <Coffee className="size-5" strokeWidth={1.8} />
-            </a>
-          )}
-        </div>
+        <button
+          type="button"
+          aria-label="Refresh"
+          disabled={query.isFetching}
+          className="flex size-11 shrink-0 items-center justify-center rounded-xl outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+          onClick={() => void query.refetch()}
+        >
+          <RefreshCw className={cn("size-4.5", query.isFetching && "animate-spin")} strokeWidth={1.8} />
+        </button>
       </footer>
     </main>
   );
