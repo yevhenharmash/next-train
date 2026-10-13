@@ -23,7 +23,7 @@ function apply(theme: Theme) {
   noTransitions.textContent = "*,*::before,*::after{transition:none!important}";
   document.head.appendChild(noTransitions);
   document.documentElement.classList.toggle("dark", dark);
-  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#0a0a0a" : "#ffffff");
+  document.querySelector('meta[name="theme-color"]')?.setAttribute("content", dark ? "#0b0d10" : "#f3f4f2");
   void window.getComputedStyle(document.body).backgroundColor; // force the new styles before re-enabling
   requestAnimationFrame(() => noTransitions.remove());
 }

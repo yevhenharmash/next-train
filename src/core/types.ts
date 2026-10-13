@@ -1,6 +1,6 @@
 // Raw RDM "Live Departure Board" (LDBWS) response, GetDepBoardWithDetails.
-// Field names come from the old LDBWS SOAP schema and are UNVERIFIED until the
-// Phase 0 curl (see PLAN.md §2). Everything optional that the API may omit is optional here.
+// Field names checked against a real response on 2026-10-13 (fixtures/live-evening.json), except
+// the nrccMessages item shape. Everything optional that the API may omit is optional here.
 
 export type RawLocation = {
   locationName: string;

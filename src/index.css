@@ -5,7 +5,10 @@
    (System follows prefers-color-scheme; Light and Dark override it). */
 @custom-variant dark (&:where(.dark, .dark *));
 
+/* Design: https://claude.ai/artifact/S7ZSkiHgMk3FEnXsxBL2Zz. A plain light page, one dark "next train"
+   card with the leave time in amber, status always in words and colour. */
 @theme inline {
+  --font-sans: "Geist", ui-sans-serif, system-ui, sans-serif;
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
@@ -28,51 +31,95 @@
   --color-border: var(--border);
   --color-input: var(--input);
   --color-ring: var(--ring);
+  --color-hero: var(--hero);
+  --color-hero-foreground: var(--hero-foreground);
+  --color-hero-muted: var(--hero-muted);
+  --color-hero-line: var(--hero-line);
+  --color-hero-ok: var(--hero-ok);
+  --color-hero-late: var(--hero-late);
+  --color-hero-bad: var(--hero-bad);
+  --color-amber: var(--amber);
+  --color-ok: var(--ok);
+  --color-ok-bg: var(--ok-bg);
+  --color-late: var(--late);
+  --color-late-bg: var(--late-bg);
+  --color-bad: var(--bad);
+  --color-bad-bg: var(--bad-bg);
+  --color-best-bg: var(--best-bg);
 }
 
 :root {
   color-scheme: light;
-  --radius: 0.625rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --radius: 0.75rem;
+  --background: #f3f4f2;
+  --foreground: #101317;
+  --card: #ffffff;
+  --card-foreground: #101317;
+  --popover: #ffffff;
+  --popover-foreground: #101317;
+  --primary: #101317;
+  --primary-foreground: #f3f4f2;
+  --secondary: #e8e9e6;
+  --secondary-foreground: #101317;
+  --muted: #e8e9e6;
+  --muted-foreground: #5a6068;
+  --accent: #e8e9e6;
+  --accent-foreground: #101317;
+  --destructive: #a2251b;
+  --border: #e1e3df;
+  --input: #e1e3df;
+  --ring: #8a9099;
+
+  /* The "next train" card stays dark in both themes. */
+  --hero: #101317;
+  --hero-foreground: #f4f5f2;
+  --hero-muted: #a9afb7;
+  --hero-line: #2b3037;
+  --hero-ok: #86d9a6;
+  --hero-late: #ffc861;
+  --hero-bad: #ff9a8f;
+  --amber: #ffb81c;
+
+  --ok: #21653e;
+  --ok-bg: #e2f0e7;
+  --late: #865100;
+  --late-bg: #fff0d1;
+  --bad: #a2251b;
+  --bad-bg: #fbe6e3;
+  --best-bg: #fff8e5;
 }
 
 .dark {
   color-scheme: dark;
-  --background: oklch(0.145 0 0);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --background: #0b0d10;
+  --foreground: #eceef0;
+  --card: #14171b;
+  --card-foreground: #eceef0;
+  --popover: #14171b;
+  --popover-foreground: #eceef0;
+  --primary: #eceef0;
+  --primary-foreground: #0b0d10;
+  --secondary: #1b1f24;
+  --secondary-foreground: #eceef0;
+  --muted: #1b1f24;
+  --muted-foreground: #9ba2ab;
+  --accent: #1b1f24;
+  --accent-foreground: #eceef0;
+  --destructive: #ff9a8f;
+  --border: #262a30;
+  --input: #262a30;
+  --ring: #5a6068;
+
+  --hero: #1d2127;
+  --hero-line: #323840;
+
+  --ok: #86d9a6;
+  --ok-bg: #15291e;
+  --late: #ffc861;
+  --late-bg: #2e2410;
+  --bad: #ff9a8f;
+  --bad-bg: #35181a;
+  --best-bg: #1e1b12;
 }
 
 @layer base {
@@ -80,7 +127,7 @@
     @apply border-border outline-ring/50;
   }
   body {
-    @apply bg-background text-foreground antialiased;
+    @apply bg-background font-sans text-foreground antialiased;
   }
   /* Tailwind v4 no longer sets this on buttons by default */
   button:not(:disabled),

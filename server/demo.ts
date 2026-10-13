@@ -9,19 +9,20 @@ type Pattern = {
   operator: string;
   journey: number;
   platform: string;
-  length: number;
 };
 
-// Roughly the off-peak hourly pattern from Watford Junction to Euston.
+// The evening pattern seen on a real board (2026-10-13, src/core/__tests__/fixtures/live-evening.json):
+// Overground every 15 min taking ~51 min, LNR about every 15 min taking ~20. No Avanti stopped then.
 const HOURLY: Pattern[] = [
-  { minute: 5, operatorCode: "LO", operator: "London Overground", journey: 51, platform: "2", length: 5 },
-  { minute: 9, operatorCode: "VT", operator: "Avanti West Coast", journey: 16, platform: "8", length: 11 },
-  { minute: 13, operatorCode: "LM", operator: "London Northwestern Railway", journey: 20, platform: "9", length: 8 },
-  { minute: 24, operatorCode: "LM", operator: "London Northwestern Railway", journey: 22, platform: "10", length: 12 },
-  { minute: 25, operatorCode: "LO", operator: "London Overground", journey: 51, platform: "2", length: 5 },
-  { minute: 38, operatorCode: "VT", operator: "Avanti West Coast", journey: 16, platform: "8", length: 9 },
-  { minute: 43, operatorCode: "LM", operator: "London Northwestern Railway", journey: 20, platform: "9", length: 8 },
-  { minute: 45, operatorCode: "LO", operator: "London Overground", journey: 51, platform: "2", length: 5 },
+  { minute: 0, operatorCode: "LO", operator: "London Overground", journey: 51, platform: "1" },
+  { minute: 2, operatorCode: "LM", operator: "LNR & WMR", journey: 20, platform: "9" },
+  { minute: 15, operatorCode: "LO", operator: "London Overground", journey: 51, platform: "4" },
+  { minute: 15, operatorCode: "LM", operator: "LNR & WMR", journey: 23, platform: "9" },
+  { minute: 30, operatorCode: "LO", operator: "London Overground", journey: 51, platform: "3" },
+  { minute: 32, operatorCode: "LM", operator: "LNR & WMR", journey: 20, platform: "9" },
+  { minute: 33, operatorCode: "LM", operator: "LNR & WMR", journey: 17, platform: "7" },
+  { minute: 45, operatorCode: "LO", operator: "London Overground", journey: 51, platform: "2" },
+  { minute: 45, operatorCode: "LM", operator: "LNR & WMR", journey: 23, platform: "9" },
 ];
 
 const ukClock = new Intl.DateTimeFormat("en-GB", {
@@ -65,7 +66,7 @@ export function demoBoard(now: Date): RawBoard {
         : noEstimate
           ? "This train has been delayed by a signalling problem"
           : null,
-      length: pattern.length,
+      length: 0, // the real board reports 0 (unknown) for every service
       destination: [{ locationName: "London Euston", crs: "EUS" }],
       subsequentCallingPoints: [
         {

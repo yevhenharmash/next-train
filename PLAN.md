@@ -195,7 +195,7 @@ useQuery({
 
 ## 7. Phases
 
-**Status (2026-10-10):** Phases 1 and 2 are built and checked against **synthetic** fixtures and dev demo data (`src/core/__tests__/fixtures/README.md`). Phase 0 is still open: it needs an RDM key. Then swap in real fixtures, fix any schema differences, and check `pnpm dev` against live data. Phase 3's function (`api/board.ts`) is written but not deployed.
+**Status (2026-10-13):** Phases 0–2 are done. The RDM "Live Departure Board" subscription (Open licence) covers `GetDepBoardWithDetails` on the `…-dep1_2` route, and the real response matched our field names with no code changes. `pnpm dev` serves live trains. Still unseen live: alerts, cancellations, "Delayed" (`src/core/__tests__/fixtures/README.md`). The licence allows public use with "National Rail" credited, but no reselling of the data as-is. Phase 3's function (`api/board.ts`) is written but not deployed.
 
 Things to check when deploying (Phase 3), none of them tested yet:
 

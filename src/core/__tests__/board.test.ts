@@ -94,6 +94,27 @@ describe("parseBoard", () => {
     const board = parseBoard({ ...fixtures.evening, trainServices: null }, "EUS", nowOf(fixtures.evening));
     expect(board.trains).toEqual([]);
   });
+
+  it("parses a real RDM board (Tue 2026-10-13 20:20)", () => {
+    const board = parseBoard(fixtures.liveEvening, "EUS", nowOf(fixtures.liveEvening));
+    expect(board.station).toBe("Watford Junction");
+    expect(board.destination).toBe("London Euston");
+    // No nrccMessages key at all when there are no alerts.
+    expect(board.alerts).toEqual([]);
+    expect(board.trains).toHaveLength(10);
+    expect(board.trains.every((t) => t.scheduledArrival !== null)).toBe(true);
+
+    const late = board.trains.find((t) => t.id === "9645110WATFDJ__")!;
+    expect(late.operator).toBe("LNR & WMR");
+    expect(late.operatorCode).toBe("LM");
+    expect(late.platform).toBe("7");
+    // length is 0 (unknown) on every service here.
+    expect(late.coaches).toBeNull();
+    expect(late.departure).toEqual({ kind: "late", minutes: 12 });
+    expect(ukClock(late.expectedDeparture)).toBe("20:45");
+    expect(ukClock(late.scheduledArrival)).toBe("20:50");
+    expect(ukClock(late.expectedArrival)).toBe("21:00");
+  });
 });
 
 describe("alert text", () => {

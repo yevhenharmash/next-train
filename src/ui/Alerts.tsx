@@ -1,7 +1,5 @@
 import { TriangleAlert, X } from "lucide-react";
 import { useState } from "react";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Button } from "@/components/ui/button";
 
 /** National Rail service messages (NRCC). Dismissed ones stay hidden until the page reloads. */
 export function Alerts({ messages }: { messages: string[] }) {
@@ -11,19 +9,22 @@ export function Alerts({ messages }: { messages: string[] }) {
   return (
     <div className="flex flex-col gap-2">
       {visible.map((message) => (
-        <Alert key={message} className="pr-10">
-          <TriangleAlert />
-          <AlertDescription className="text-foreground">{message}</AlertDescription>
-          <Button
-            variant="ghost"
-            size="icon-xs"
-            className="absolute top-2 right-2"
+        <div
+          key={message}
+          role="status"
+          className="flex items-start gap-2.5 rounded-[14px] bg-late-bg py-3 pr-1.5 pl-3.5"
+        >
+          <TriangleAlert aria-hidden className="mt-0.5 size-4.5 shrink-0 text-late" />
+          <p className="flex-1 text-sm">{message}</p>
+          <button
+            type="button"
             aria-label="Dismiss"
+            className="-my-2 flex size-9 shrink-0 items-center justify-center rounded-[10px] text-muted-foreground outline-none hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
             onClick={() => setDismissed((d) => [...d, message])}
           >
-            <X />
-          </Button>
-        </Alert>
+            <X className="size-4" />
+          </button>
+        </div>
       ))}
     </div>
   );

@@ -7,6 +7,9 @@ export const DESTINATIONS = {
 
 export type DestinationCrs = keyof typeof DESTINATIONS;
 
+/** For buttons and headings where the full name doesn't fit. */
+export const SHORT_NAMES: Record<DestinationCrs, string> = { EUS: "Euston", CLJ: "Clapham Jn" };
+
 export type Settings = {
   walkMinutes: number;
   destination: DestinationCrs;

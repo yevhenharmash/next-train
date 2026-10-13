@@ -22,13 +22,14 @@ Vite 8, React 19, TypeScript 6 (**not 7**: typescript-eslint doesn't support it 
   - `time.ts`: UK-local "HH:MM" → Date, with midnight rollover.
   - `board.ts`: raw board → `Train[]`.
   - `rank.ts`: sort by arrival, pick the best train, compute leave-by times.
-- `src/core/__tests__/`: one test file per area, plus `fixtures/` (synthetic for now; see the README there).
+- `src/core/__tests__/`: one test file per area, plus `fixtures/` (one real board, three synthetic scenarios; see the README there).
 - `src/ui/`: React.
   - `clock.ts` is the only place the real clock is read.
   - `api.ts` → `hooks.ts` (useQuery) → components.
-  - `format.ts` holds every display string.
+  - `format.ts` holds every display string. `Status.tsx` is the status pill (words plus colour, never colour alone).
   - `settings.ts` stores walk time and destination in localStorage.
   - `theme.ts` + `ThemeToggle.tsx`: System / Light / Dark. It sets a `dark` class on `<html>`; an inline script in `index.html` applies the same logic before first paint. Change both together.
+- Design: [canvas](https://claude.ai/artifact/S7ZSkiHgMk3FEnXsxBL2Zz) (evening, disrupted, night). Its colours are the tokens in `src/index.css`. The "next train" card (`--hero`) stays dark in both themes, and the leave time is amber. Font: Geist, loaded from Google Fonts in `index.html`.
 - `src/components/ui/`: shadcn-generated components. Add more with `pnpm dlx shadcn@latest add <name>`, then check the import is `@/lib/utils`. Once, it was generated as `from "cn"` and installed a random npm package called `cn`.
 - `server/board.ts`: the `/api/board` proxy handler, shared by dev and prod. It allow-lists params, adds the key, and caches for 30s at the edge.
 - `server/demo.ts`: dev-only demo board.
@@ -41,5 +42,6 @@ Vite 8, React 19, TypeScript 6 (**not 7**: typescript-eslint doesn't support it 
 - Darwin times are UK-local "HH:MM" strings with no date. Always go through `core/time.ts`, and format with `ui/format.ts` (UK timezone), never `toLocaleTimeString()`.
 - `etd` can be "On time", "Delayed" (no time), "Cancelled" or "HH:MM". `platform` is often missing until shortly before departure.
 - Never show an empty board for a failed load. Keep the last good data and say it's stale.
-- The RDM field names are still unverified (PLAN.md §2, Phase 0). When real responses arrive, replace the fixtures and fix `core/types.ts` and `board.ts`.
+- The RDM field names are verified against a real board, but not yet the `nrccMessages` item shape, cancellations or "Delayed". When you see one live, save it as a fixture.
+- `length` (coaches) is 0 on every real service seen so far, so `coaches` is usually null.
 - Attribution "Powered by National Rail Enquiries" stays in the footer.

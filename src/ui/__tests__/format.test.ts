@@ -1,5 +1,19 @@
 import { describe, expect, it } from "vitest";
-import { clockTime, duration, fromNow, leaveLabel, platformLabel, runningLabel } from "../format";
+import { parseBoard } from "@/core/board";
+import { rank } from "@/core/rank";
+import { fixtures, nowOf } from "@/core/__tests__/helpers";
+import {
+  clockTime,
+  duration,
+  fromNow,
+  leaveHint,
+  leaveLabel,
+  operatorLabel,
+  platformLabel,
+  rowDetails,
+  runningLabel,
+  trainDetails,
+} from "../format";
 
 const now = new Date("2026-10-08T17:02:00Z"); // 18:02 BST
 const at = (minutes: number) => new Date(now.getTime() + minutes * 60_000);
@@ -32,5 +46,23 @@ describe("format", () => {
     expect(runningLabel({ kind: "late", minutes: 4 })).toBe("4 min late");
     expect(runningLabel({ kind: "late", minutes: -2 })).toBe("2 min early");
     expect(runningLabel({ kind: "delayed" })).toBe("Delayed");
+  });
+
+  it("describes trains with only what the real board gives", () => {
+    const raw = fixtures.liveEvening; // 20:20
+    const trains = rank(parseBoard(raw, "EUS", nowOf(raw)).trains, nowOf(raw), 5);
+    const best = trains.find((t) => t.best)!;
+    expect(leaveHint(best.leaveBy!, 5)).toBe("Leave by 20:29 · 5 min walk");
+    // length is 0, so no coach count.
+    expect(trainDetails(best)).toBe("18 min");
+    expect(rowDetails(best)).toBe("18 min · leave 20:29");
+    const overground = trains.find((t) => t.operatorCode === "LO")!;
+    expect(rowDetails(overground)).toBe("51 min · leave 20:25");
+  });
+
+  it("names operators by code, not the board's name", () => {
+    expect(operatorLabel("LM", "LNR & WMR")).toBe("London Northwestern Railway");
+    expect(operatorLabel("LO", "London Overground")).toBe("London Overground");
+    expect(operatorLabel("XX", "Some Railway")).toBe("Some Railway");
   });
 });

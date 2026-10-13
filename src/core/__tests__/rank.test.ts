@@ -16,6 +16,24 @@ describe("rank", () => {
     expect(ids(ranked("evening", 10))).toEqual(["VT1809", "LM1813", "LM1824", "VT1838", "LO1805", "LO1825"]);
   });
 
+  it("sorts a real board by arrival", () => {
+    // 20:20, 5 min walk. The 20:30 Overground leaves first but gets in at 21:21, after three LNR trains.
+    const trains = ranked("liveEvening", 5);
+    expect(trains.map((t) => ukClock(t.arrivesAt))).toEqual([
+      "20:52",
+      "21:00",
+      "21:08",
+      "21:21",
+      "21:30",
+      "21:36",
+      "21:38",
+      "21:51",
+      "22:06",
+      "22:21",
+    ]);
+    expect(trains.find((t) => t.best)!.id).toBe("9657836WATFDJ__");
+  });
+
   it("picks the fast train over the stopping one that leaves first", () => {
     // 18:02, no walk: the 18:05 Overground leaves first but arrives 18:56; the 18:09 Avanti arrives 18:25.
     const best = ranked("evening", 0).find((t) => t.best)!;
