@@ -1,41 +1,49 @@
-import { RefreshCw } from "lucide-react";
-import { useMemo } from "react";
+import { Coffee, RefreshCw } from "lucide-react";
+import { useMemo, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { parseBoard } from "@/core/board";
 import { delayedBeforeBest, rank } from "@/core/rank";
+import { shortName } from "@/core/stations";
 import { cn } from "@/lib/utils";
 import { Alerts } from "./Alerts";
 import { useNow } from "./clock";
 import { clockTime } from "./format";
 import { useBoard } from "./hooks";
 import { NextTrain } from "./NextTrain";
-import { DESTINATIONS, SHORT_NAMES, useSettings } from "./settings";
-import { SettingsBar } from "./SettingsBar";
+import { RouteCard, type RouteEnd } from "./RouteCard";
+import { swapped, useSettings, walkFor, withStation, withWalk } from "./settings";
+import { StationPicker } from "./StationPicker";
 import { ThemeToggle } from "./ThemeToggle";
 import { TrainRow } from "./TrainRow";
+import { WalkRow } from "./WalkRow";
 
-const ORIGIN = "WFJ";
+/** Public on purpose: a Ko-fi / Buy Me a Coffee / GitHub Sponsors page. No button when it isn't set. */
+const DONATE_URL: string | undefined = import.meta.env.VITE_DONATE_URL || undefined;
 
 export function App() {
   const [settings, setSettings] = useSettings();
+  const [picker, setPicker] = useState<{ open: boolean; end: RouteEnd }>({ open: false, end: "to" });
   const now = useNow();
-  const query = useBoard(ORIGIN, settings.destination);
-  const destinationName = DESTINATIONS[settings.destination];
-  const destinationShort = SHORT_NAMES[settings.destination];
+  const { from, to } = settings;
+  const walk = walkFor(settings, from.crs);
+  const query = useBoard(from.crs, to.crs);
+  const toShort = shortName(to.name);
 
   const board = useMemo(() => {
     if (!query.data) return null;
-    const parsed = parseBoard(query.data.raw, settings.destination, now);
-    return { ...parsed, trains: rank(parsed.trains, now, settings.walkMinutes) };
-  }, [query.data, settings, now]);
+    const parsed = parseBoard(query.data.raw, to.crs, now);
+    return { ...parsed, trains: rank(parsed.trains, now, walk) };
+  }, [query.data, to.crs, walk, now]);
+
+  const noTrains = `No direct trains from ${from.name} to ${to.name} in the next 2 hours.`;
 
   return (
     <main className="mx-auto flex min-h-dvh max-w-md flex-col gap-4 px-4 pt-[max(1.25rem,env(safe-area-inset-top))] pb-[max(0.75rem,env(safe-area-inset-bottom))] text-[15px] leading-snug">
       <header className="flex items-center justify-between gap-2">
         <div className="flex min-w-0 flex-col gap-0.5">
-          <h1 className="text-[21px] font-semibold tracking-[-0.015em]">Watford Junction</h1>
-          <p className="text-[13px] text-muted-foreground">to {destinationName}, by arrival time</p>
+          <h1 className="text-[21px] font-semibold tracking-[-0.015em]">Next train</h1>
+          <p className="text-[13px] text-muted-foreground">Sorted by arrival time</p>
         </div>
         <div className="flex items-center gap-2">
           {query.data?.demo && <Badge variant="secondary">Demo data</Badge>}
@@ -43,7 +51,24 @@ export function App() {
         </div>
       </header>
 
-      <SettingsBar settings={settings} onChange={setSettings} />
+      <RouteCard
+        from={from}
+        to={to}
+        onSwap={() => setSettings(swapped(settings))}
+        onPick={(end) => setPicker({ open: true, end })}
+      />
+      <WalkRow station={from.name} minutes={walk} onChange={(minutes) => setSettings(withWalk(settings, minutes))} />
+      <StationPicker
+        open={picker.open}
+        end={picker.end}
+        selected={settings[picker.end]}
+        recent={settings.recent}
+        onSelect={(station) => {
+          setSettings(withStation(settings, picker.end, station));
+          setPicker({ ...picker, open: false });
+        }}
+        onClose={() => setPicker({ ...picker, open: false })}
+      />
 
       {board ? (
         <>
@@ -51,8 +76,9 @@ export function App() {
           <NextTrain
             train={board.trains.find((t) => t.best) ?? null}
             delayed={delayedBeforeBest(board.trains)}
-            destination={destinationShort}
-            walkMinutes={settings.walkMinutes}
+            destination={toShort}
+            walkMinutes={walk}
+            emptyText={board.trains.length === 0 ? noTrains : "No train you can still catch in the next 2 hours."}
             now={now}
           />
 
@@ -77,9 +103,9 @@ export function App() {
             </div>
           )}
 
-          <section aria-label={`Trains to ${destinationName}, by arrival`} className="flex flex-col gap-2">
+          <section aria-label={`Trains to ${to.name}, by arrival`} className="flex flex-col gap-2">
             <div className="flex items-baseline justify-between gap-2 px-1">
-              <h2 className="text-[13px] font-semibold text-muted-foreground">By arrival at {destinationShort}</h2>
+              <h2 className="text-[13px] font-semibold text-muted-foreground">By arrival at {toShort}</h2>
               <span aria-hidden className="text-xs text-muted-foreground">
                 dep → arr
               </span>
@@ -91,26 +117,9 @@ export function App() {
                 ))}
               </ul>
             ) : (
-              <p className="rounded-2xl border border-dashed px-4 py-6 text-center text-muted-foreground">
-                No trains to {destinationName} in the next 2 hours.
-              </p>
+              <p className="rounded-2xl border border-dashed px-4 py-6 text-center text-muted-foreground">{noTrains}</p>
             )}
           </section>
-
-          <footer className="mt-auto flex items-center justify-between gap-2 pl-1 text-xs text-muted-foreground">
-            <span className="tabular-nums">
-              Updated {clockTime(board.generatedAt)} · Powered by National Rail Enquiries
-            </span>
-            <button
-              type="button"
-              aria-label="Refresh"
-              disabled={query.isFetching}
-              className="flex size-11 shrink-0 items-center justify-center rounded-xl outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
-              onClick={() => void query.refetch()}
-            >
-              <RefreshCw className={cn("size-4.5", query.isFetching && "animate-spin")} strokeWidth={1.8} />
-            </button>
-          </footer>
         </>
       ) : query.isError ? (
         <div role="alert" className="flex flex-col items-start gap-3 rounded-2xl border bg-card p-4">
@@ -123,6 +132,50 @@ export function App() {
       ) : (
         <p className="py-10 text-center text-muted-foreground">Loading trains…</p>
       )}
+
+      <footer className="mt-auto flex items-center justify-between gap-2 pl-1 text-xs text-muted-foreground">
+        <div className="flex flex-col gap-0.5">
+          <span className="tabular-nums">
+            {board && `Updated ${clockTime(board.generatedAt)} · `}Powered by National Rail Enquiries
+          </span>
+          <span>
+            Station list:{" "}
+            <a
+              href="https://github.com/davwheat/uk-railway-stations"
+              target="_blank"
+              rel="noreferrer"
+              className="underline underline-offset-2 hover:text-foreground"
+            >
+              davwheat, Trainline EU
+            </a>{" "}
+            (ODbL)
+          </span>
+        </div>
+        <div className="flex shrink-0 items-center gap-1">
+          <button
+            type="button"
+            aria-label="Refresh"
+            disabled={query.isFetching}
+            className="flex size-11 shrink-0 items-center justify-center rounded-xl outline-none hover:bg-accent hover:text-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            onClick={() => void query.refetch()}
+          >
+            <RefreshCw className={cn("size-4.5", query.isFetching && "animate-spin")} strokeWidth={1.8} />
+          </button>
+          {DONATE_URL && (
+            // Same look as the theme button. Kept down here, away from the trains: people open this in a hurry.
+            <a
+              href={DONATE_URL}
+              target="_blank"
+              rel="noreferrer"
+              aria-label="Say thanks (opens in a new tab)"
+              title="Say thanks"
+              className="flex size-11 shrink-0 items-center justify-center rounded-xl border bg-card text-foreground outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            >
+              <Coffee className="size-5" strokeWidth={1.8} />
+            </a>
+          )}
+        </div>
+      </footer>
     </main>
   );
 }

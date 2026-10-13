@@ -42,12 +42,15 @@ function toTrain(service: RawService, destinationCrs: string, now: Date): Train 
   if (!scheduledDeparture) return null;
 
   const departure = parseEstimate(service.etd, scheduledDeparture, now);
-  const cancelled = service.isCancelled === true || departure.running.kind === "cancelled";
-
   const stop = findCallingPoint(service, destinationCrs);
+  // A train that still runs but no longer calls at the destination (say it now terminates early)
+  // is cancelled as far as this trip goes: it must never be the one we tell you to catch.
+  const stopCancelled = stop !== undefined && (stop.isCancelled === true || stop.et?.trim() === "Cancelled");
+  const cancelled = service.isCancelled === true || departure.running.kind === "cancelled" || stopCancelled;
+
   const scheduledArrival = stop ? parseUkTime(stop.st, now) : null;
   const arrival =
-    stop && scheduledArrival && !stop.isCancelled ? parseEstimate(stop.et ?? stop.at, scheduledArrival, now) : null;
+    stop && scheduledArrival && !stopCancelled ? parseEstimate(stop.et ?? stop.at, scheduledArrival, now) : null;
 
   return {
     id: service.serviceID,
@@ -57,7 +60,9 @@ function toTrain(service: RawService, destinationCrs: string, now: Date): Train 
     destination: service.destination.map((d) => d.locationName).join(" & "),
     coaches: service.length || null,
     cancelled,
-    reason: (cancelled ? service.cancelReason : service.delayReason) ?? null,
+    reason: cancelled
+      ? (service.cancelReason ?? (stopCancelled ? `No longer stops at ${stop.locationName}` : null))
+      : (service.delayReason ?? null),
     scheduledDeparture,
     expectedDeparture: cancelled ? null : departure.expected,
     departure: cancelled ? { kind: "cancelled" } : departure.running,

@@ -18,15 +18,29 @@ function json(status: number, body: unknown, headers: Record<string, string> = {
 
 export type BoardQuery = { crs: string; filterCrs: string; numRows: number };
 
-/** Validates the query string. Returns an error message for anything outside the allow-list. */
-export function readBoardQuery(params: URLSearchParams): BoardQuery | string {
-  const crs = (params.get("crs") ?? "WFJ").toUpperCase();
-  const filterCrs = (params.get("filterCrs") ?? "EUS").toUpperCase();
-  const numRows = Number(params.get("numRows") ?? "10");
-  if (!CRS.test(crs)) return "crs must be a 3-letter station code";
-  if (!CRS.test(filterCrs)) return "filterCrs must be a 3-letter station code";
-  if (!Number.isInteger(numRows) || numRows < 1 || numRows > 20) return "numRows must be 1–20";
-  return { crs, filterCrs, numRows };
+const ROWS = 10;
+
+/**
+ * Validates the query string. Returns an error message for anything outside the allow-list.
+ * Only the exact form the app sends is accepted (`?crs=WFJ&filterCrs=EUS&numRows=10`): the edge cache
+ * keys on the whole URL, so `?crs=wfj`, an extra `&x=1` or another row count would each skip it
+ * and spend a request of our RDM quota.
+ */
+export function readBoardQuery(search: string): BoardQuery | string {
+  const params = new URLSearchParams(search);
+  const crs = params.get("crs") ?? "";
+  const filterCrs = params.get("filterCrs") ?? "";
+  if (!CRS.test(crs)) return "crs must be a 3-letter station code in capitals";
+  if (!CRS.test(filterCrs)) return "filterCrs must be a 3-letter station code in capitals";
+  if (crs === filterCrs) return "crs and filterCrs must be different stations";
+  const query = { crs, filterCrs, numRows: ROWS };
+  if (search !== `?${canonicalSearch(query)}`) return `Use exactly ?${canonicalSearch(query)}`;
+  return query;
+}
+
+/** The one query string the proxy accepts for a route. `src/ui/api.ts` sends exactly this. */
+export function canonicalSearch({ crs, filterCrs }: Pick<BoardQuery, "crs" | "filterCrs">): string {
+  return new URLSearchParams({ crs, filterCrs, numRows: String(ROWS) }).toString();
 }
 
 export function upstreamUrl({ crs, filterCrs, numRows }: BoardQuery, baseUrl = DEFAULT_BASE_URL): string {
@@ -42,7 +56,7 @@ export function upstreamUrl({ crs, filterCrs, numRows }: BoardQuery, baseUrl = D
 export type BoardConfig = { apiKey: string | undefined; baseUrl?: string };
 
 export async function handleBoardRequest(url: URL, { apiKey, baseUrl }: BoardConfig): Promise<Response> {
-  const query = readBoardQuery(url.searchParams);
+  const query = readBoardQuery(url.search);
   if (typeof query === "string") return json(400, { error: query });
   if (!apiKey) return json(500, { error: "RDM_KEY is not configured on the server" });
 

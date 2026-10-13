@@ -20,11 +20,13 @@ function boardApi(apiKey: string | undefined, baseUrl: string | undefined): Plug
         const url = new URL(req.originalUrl ?? req.url ?? "/", "http://localhost");
         const respond = async (): Promise<Response> => {
           if (apiKey) return handleBoardRequest(url, { apiKey, baseUrl });
-          const query = readBoardQuery(url.searchParams);
+          const query = readBoardQuery(url.search);
           if (typeof query === "string") return Response.json({ error: query }, { status: 400 });
           const board = demoBoard(new Date());
-          if (query.filterCrs !== "EUS") {
-            // The demo only knows the Euston timetable.
+          if (query.crs !== "WFJ" || query.filterCrs !== "EUS") {
+            // The demo only knows the Watford Junction → Euston timetable; any other route is an empty board.
+            board.locationName = query.crs;
+            board.crs = query.crs;
             board.filterLocationName = query.filterCrs;
             board.filtercrs = query.filterCrs;
             board.trainServices = [];
@@ -61,7 +63,7 @@ export default defineConfig(({ mode }) => {
       alias: { "@": path.resolve(import.meta.dirname, "./src") },
     },
     test: {
-      include: ["src/**/*.test.ts"],
+      include: ["src/**/*.test.ts", "server/**/*.test.ts"],
     },
   };
 });

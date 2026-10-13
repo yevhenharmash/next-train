@@ -48,6 +48,9 @@ export type RawBoard = {
   trainServices?: RawService[] | null;
 };
 
+/** A station, by its three-letter CRS code (the key RDM uses) and its name. */
+export type Station = { crs: string; name: string };
+
 /** How a departure (or arrival) is running compared with the timetable. */
 export type Running =
   | { kind: "on-time" }

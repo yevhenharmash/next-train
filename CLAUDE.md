@@ -1,6 +1,6 @@
 # next-train
 
-Web app: next trains from Watford Junction to London Euston, sorted by **arrival** time, with "leave by" times based on your walk. Plan, API notes and open questions: [PLAN.md](PLAN.md). Similar apps and how we differ: [COMPETITORS.md](COMPETITORS.md).
+Web app: next trains between any two stations (default Watford Junction → London Euston), sorted by **arrival** time, with "leave by" times based on your walk. Plan, API notes and open questions: [PLAN.md](PLAN.md). Similar apps and how we differ: [COMPETITORS.md](COMPETITORS.md).
 
 ```sh
 pnpm install
@@ -22,17 +22,20 @@ Vite 8, React 19, TypeScript 6 (**not 7**: typescript-eslint doesn't support it 
   - `time.ts`: UK-local "HH:MM" → Date, with midnight rollover.
   - `board.ts`: raw board → `Train[]`.
   - `rank.ts`: sort by arrival, pick the best train, compute leave-by times.
+  - `stations.ts`: station search (code, then name prefix, word prefix, substring).
 - `src/core/__tests__/`: one test file per area, plus `fixtures/` (one real board, three synthetic scenarios; see the README there).
 - `src/ui/`: React.
   - `clock.ts` is the only place the real clock is read.
   - `api.ts` → `hooks.ts` (useQuery) → components.
   - `format.ts` holds every display string. `Status.tsx` is the status pill (words plus colour, never colour alone).
-  - `settings.ts` stores walk time and destination in localStorage.
+  - `settings.ts`: route (from/to), walk time per departure station, recent stations; localStorage, with a migration from the first version's `{ walkMinutes, destination }`.
+  - `RouteCard.tsx` (A ⇄ B), `StationPicker.tsx` (bottom sheet, Radix Dialog), `WalkRow.tsx`.
   - `theme.ts` + `ThemeToggle.tsx`: System / Light / Dark. It sets a `dark` class on `<html>`; an inline script in `index.html` applies the same logic before first paint. Change both together.
 - Design: [canvas](https://claude.ai/artifact/S7ZSkiHgMk3FEnXsxBL2Zz) (evening, disrupted, night). Its colours are the tokens in `src/index.css`. The "next train" card (`--hero`) stays dark in both themes, and the leave time is amber. Font: Geist, loaded from Google Fonts in `index.html`.
+- `src/data/stations.json`: all 2,609 Darwin stations as `[crs, name]`, loaded only when the picker opens. **ODbL**: keep the footer credit; see `src/data/README.md`.
 - `src/components/ui/`: shadcn-generated components. Add more with `pnpm dlx shadcn@latest add <name>`, then check the import is `@/lib/utils`. Once, it was generated as `from "cn"` and installed a random npm package called `cn`.
-- `server/board.ts`: the `/api/board` proxy handler, shared by dev and prod. It allow-lists params, adds the key, and caches for 30s at the edge.
-- `server/demo.ts`: dev-only demo board.
+- `server/board.ts`: the `/api/board` proxy handler, shared by dev and prod. It only accepts the exact query `src/ui/api.ts` sends (`?crs=WFJ&filterCrs=EUS&numRows=10`, any two different stations), so variations can't skip the 30s edge cache. Change both together. Tests in `server/__tests__/`.
+- `server/demo.ts`: dev-only demo board (Watford Junction → Euston only; other routes come back empty).
 - `api/board.ts`: Vercel function wrapping `server/board.ts`. Import with a `.js` extension there; Vercel runs it as Node ESM.
 - `vite.config.ts`: serves `/api/board` in dev through the same handler.
 

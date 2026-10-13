@@ -9,11 +9,13 @@ type Props = {
   /** Short destination name, e.g. "Euston". */
   destination: string;
   walkMinutes: number;
+  /** What to say when there's no best train and nothing delayed to mention. */
+  emptyText: string;
   now: Date;
 };
 
 /** The headline: the best train and when to leave for it. A dark card in both themes. */
-export function NextTrain({ train, delayed, destination, walkMinutes, now }: Props) {
+export function NextTrain({ train, delayed, destination, walkMinutes, emptyText, now }: Props) {
   return (
     <section
       aria-label="Next train"
@@ -59,7 +61,7 @@ export function NextTrain({ train, delayed, destination, walkMinutes, now }: Pro
         </>
       ) : (
         <p className="text-xl leading-tight font-semibold">
-          {delayed ? "No train with a confirmed time yet." : "No train you can still catch in the next 2 hours."}
+          {delayed ? "No train with a confirmed time yet." : emptyText}
         </p>
       )}
 

@@ -4,6 +4,7 @@ import { clockTime, operatorLabel, platformLabel, rowDetails } from "./format";
 import { Status } from "./Status";
 
 export function TrainRow({ train }: { train: RankedTrain }) {
+  const operator = operatorLabel(train.operatorCode, train.operator);
   const missed = !train.catchable && !train.cancelled;
   return (
     <li
@@ -36,8 +37,14 @@ export function TrainRow({ train }: { train: RankedTrain }) {
           )}
         </p>
         <p className="text-[13px] text-muted-foreground tabular-nums">
-          {operatorLabel(train.operatorCode, train.operator)}
-          {rowDetails(train) && ` · ${rowDetails(train)}`}
+          {/* Long names ("London Northwestern Railway") get smaller type so the row stays compact. */}
+          <span className={cn(operator.length > 12 && "text-xs")}>{operator}</span>
+          {rowDetails(train) && (
+            <>
+              {" · "}
+              <span className="whitespace-nowrap">{rowDetails(train)}</span>
+            </>
+          )}
         </p>
         {train.reason && train.departure.kind !== "on-time" && (
           <p className="text-xs text-muted-foreground">{train.reason}</p>

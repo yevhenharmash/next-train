@@ -95,6 +95,24 @@ describe("parseBoard", () => {
     expect(board.trains).toEqual([]);
   });
 
+  it("parses a real cancellation (Tue 2026-10-13 21:49)", () => {
+    const board = parseBoard(fixtures.liveCancelled, "EUS", nowOf(fixtures.liveCancelled));
+    // nrccMessages is null here (absent on the other real board): both mean no alerts.
+    expect(board.alerts).toEqual([]);
+
+    // The train is cancelled, but its Euston stop still says "On time": the train's flag wins.
+    const cancelled = board.trains.find((t) => t.id === "9662785WATFJDC_")!;
+    expect(cancelled.cancelled).toBe(true);
+    expect(cancelled.departure).toEqual({ kind: "cancelled" });
+    expect(cancelled.expectedArrival).toBeNull();
+    expect(ukClock(cancelled.scheduledArrival)).toBe("22:53");
+    expect(cancelled.reason).toBe("This service has been cancelled because of trespassers on the railway");
+
+    const late = board.trains.find((t) => t.id === "9671965WATFDJ__")!;
+    expect(late.departure).toEqual({ kind: "late", minutes: 11 });
+    expect(ukClock(late.expectedArrival)).toBe("22:41");
+  });
+
   it("parses a real RDM board (Tue 2026-10-13 20:20)", () => {
     const board = parseBoard(fixtures.liveEvening, "EUS", nowOf(fixtures.liveEvening));
     expect(board.station).toBe("Watford Junction");

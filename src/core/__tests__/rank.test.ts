@@ -34,6 +34,24 @@ describe("rank", () => {
     expect(trains.find((t) => t.best)!.id).toBe("9657836WATFDJ__");
   });
 
+  it("never picks a train that no longer stops at the destination", () => {
+    // The real board's best train (20:32 LNR), but now terminating before Euston.
+    const raw = structuredClone(fixtures.liveEvening);
+    const service = raw.trainServices!.find((t) => t.serviceID === "9657836WATFDJ__")!;
+    const euston = service.subsequentCallingPoints![0].callingPoint.find((p) => p.crs === "EUS")!;
+    euston.isCancelled = true;
+    euston.et = "Cancelled";
+
+    const now = nowOf(raw);
+    const trains = rank(parseBoard(raw, "EUS", now).trains, now, 5);
+    const terminated = trains.find((t) => t.id === "9657836WATFDJ__")!;
+    expect(terminated.cancelled).toBe(true);
+    expect(terminated.departure).toEqual({ kind: "cancelled" });
+    expect(terminated.best).toBe(false);
+    expect(terminated.reason).toBe("No longer stops at London Euston");
+    expect(trains.find((t) => t.best)!.id).toBe("9645110WATFDJ__");
+  });
+
   it("picks the fast train over the stopping one that leaves first", () => {
     // 18:02, no walk: the 18:05 Overground leaves first but arrives 18:56; the 18:09 Avanti arrives 18:25.
     const best = ranked("evening", 0).find((t) => t.best)!;
