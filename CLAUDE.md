@@ -1,4 +1,4 @@
-# traincommute
+# Traincommute
 
 Renamed from next-train on 2026-10-13. The repo, folder and localStorage keys (`next-train:settings`, `next-train:theme`) keep the old name on purpose: changing the keys would reset everyone's saved route.
 
