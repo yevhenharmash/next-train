@@ -46,14 +46,14 @@ export function App() {
         </div>
         <div className="flex items-center gap-2">
           {query.data?.demo && <Badge variant="secondary">Demo data</Badge>}
-          {/* Same look as the theme button. */}
+          {/* Amber, like "Leave in…", so it stands apart from the theme button next to it. */}
           <a
             href={DONATE_URL}
             target="_blank"
             rel="noreferrer"
             aria-label="Buy me a coffee (opens in a new tab)"
             title="Buy me a coffee"
-            className="flex size-11 shrink-0 items-center justify-center rounded-xl border bg-card text-foreground outline-none hover:bg-accent focus-visible:ring-[3px] focus-visible:ring-ring/50"
+            className="flex size-11 shrink-0 items-center justify-center rounded-xl bg-amber text-[#101317] outline-none hover:brightness-95 focus-visible:ring-[3px] focus-visible:ring-ring/50"
           >
             <Coffee className="size-5" strokeWidth={1.8} />
           </a>

@@ -95,6 +95,14 @@ describe("parseBoard", () => {
     expect(board.trains).toEqual([]);
   });
 
+  it("turns a real NRCC alert into plain text (Tue 2026-10-13 22:08)", () => {
+    // The real shape: [{ Value: "...&nbsp;... <a href=...>National Rail website</a>." }]
+    const board = parseBoard(fixtures.liveAlert, "EUS", nowOf(fixtures.liveAlert));
+    expect(board.alerts).toEqual([
+      "London Overground trains between Watford Junction and London Euston may be revised. Latest information can be found in the Disruptions area of the National Rail website.",
+    ]);
+  });
+
   it("parses a real cancellation (Tue 2026-10-13 21:49)", () => {
     const board = parseBoard(fixtures.liveCancelled, "EUS", nowOf(fixtures.liveCancelled));
     // nrccMessages is null here (absent on the other real board): both mean no alerts.

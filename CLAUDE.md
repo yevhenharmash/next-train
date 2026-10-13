@@ -45,6 +45,6 @@ Vite 8, React 19, TypeScript 6 (**not 7**: typescript-eslint doesn't support it 
 - Darwin times are UK-local "HH:MM" strings with no date. Always go through `core/time.ts`, and format with `ui/format.ts` (UK timezone), never `toLocaleTimeString()`.
 - `etd` can be "On time", "Delayed" (no time), "Cancelled" or "HH:MM". `platform` is often missing until shortly before departure.
 - Never show an empty board for a failed load. Keep the last good data and say it's stale.
-- The RDM field names are verified against a real board, but not yet the `nrccMessages` item shape, cancellations or "Delayed". When you see one live, save it as a fixture.
+- The RDM field names are verified against real boards, including a cancellation and an alert (`fixtures/live-*.json`). Not yet seen live: "Delayed" with no estimate, a cancelled destination stop. When you see one, save it as a fixture.
 - `length` (coaches) is 0 on every real service seen so far, so `coaches` is usually null.
 - Attribution "Powered by National Rail Enquiries" stays in the footer.

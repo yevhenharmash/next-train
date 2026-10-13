@@ -1,5 +1,6 @@
 import disrupted from "./fixtures/disrupted.json";
 import evening from "./fixtures/evening.json";
+import liveAlert from "./fixtures/live-alert.json";
 import liveCancelled from "./fixtures/live-cancelled.json";
 import liveEvening from "./fixtures/live-evening.json";
 import midnight from "./fixtures/midnight.json";
@@ -11,6 +12,7 @@ export const fixtures = {
   midnight: midnight as RawBoard,
   liveEvening: liveEvening as RawBoard,
   liveCancelled: liveCancelled as RawBoard,
+  liveAlert: liveAlert as RawBoard,
 };
 
 /** The moment each fixture was generated, i.e. the `now` its times are relative to. */
